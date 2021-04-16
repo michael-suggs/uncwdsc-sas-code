@@ -33,3 +33,15 @@ proc sgplot data=predictions;
 	xaxis label='Predicted';
 	keylegend / across=1 position=topright location=inside;
 run;
+
+data class;
+	set predictions;
+	max=max(PEurope, PAsia, PUSA);
+	if PEurope = max then POrigin='Europe';
+	if PAsia = max then POrigin='Asia';
+	if PUSA = max then POrigin='USA';
+run;
+
+proc freq data=class;
+	table origin*POrigin / nopercent nocol;
+run;
