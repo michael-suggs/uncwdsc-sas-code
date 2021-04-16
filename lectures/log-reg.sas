@@ -1,3 +1,4 @@
+* Binary responses
 data cars;
 	set sashelp.cars;
 	select(type);
