@@ -13,10 +13,12 @@ proc logistic data=sashelp.cars;
 	format type $type.;
 run;
 
-/* genmod to actually model the categories */
+/* model with GLM */
 proc genmod data=sashelp.cars;
 	where type not in ('Sports','Hybrid');
 	format type $type.;
+	/* binomial distribution since binary outcomes */
+	/* default is logit, but specify to be sure */
 	model type = weight enginesize /
 		  dist=binomial
 		  link=logit;
@@ -28,7 +30,7 @@ proc logistic data = sashelp.cars;
 	class origin;
 	model type = origin weight enginesize;
 	format type $type.;
-	ods select ParameterEstimates;
+	ods select ParameterEstimates CumulativeModelTest;
 run;
 
 proc genmod data=sashelp.cars;
@@ -55,13 +57,15 @@ proc logistic data=sashelp.heart;
 	model bp_status = AgeAtStart Weight
 		/ link=logit;
 	ods select ResponseProfile
+			   FitStatistics
+			   CumulativeModelTest
 			   ParameterEstimates
 			   OddsRatios;
 run;
 
 proc logistic data=sashelp.heart;
 	model bp_status = AgeAtStart Weight
-		/ link=logit;
+		/ link=alogit;
 	ods select ResponseProfile
 			   ParameterEstimates
 			   OddsRatios;
